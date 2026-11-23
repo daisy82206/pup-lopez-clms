@@ -1,5 +1,5 @@
 /* =========================================================
-   PUP Lopez CLMS - Professional Institutional Stylesheet
+   PUP Lopez CLMS - Desktop & Mobile Responsive Stylesheet
    ========================================================= */
 
 :root {
@@ -15,11 +15,12 @@
     --text-muted: #64748b;
     --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
     --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -3px rgba(15, 23, 42, 0.04);
-    --radius: 10px;
+    --radius: 12px;
 }
 
 * {
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -32,21 +33,21 @@ body {
 }
 
 /* =========================================================
-   Login Page
+   Login & Registration Pages
    ========================================================= */
 body.login-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 .login-card {
     background: var(--surface);
-    padding: 2.5rem 2.25rem;
-    border-radius: 14px;
+    padding: 2.25rem 1.85rem;
+    border-radius: 16px;
     box-shadow: var(--shadow-md);
     width: 100%;
     max-width: 410px;
@@ -57,7 +58,7 @@ body.login-page {
 .login-card h2 {
     margin: 0 0 0.35rem 0;
     color: var(--pup-maroon);
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     font-weight: 700;
     text-align: center;
     letter-spacing: -0.02em;
@@ -66,20 +67,37 @@ body.login-page {
 p.subtitle {
     text-align: center;
     color: var(--text-secondary);
-    font-size: 0.92rem;
-    margin: 0 0 1.75rem 0;
+    font-size: 0.9rem;
+    margin: 0 0 1.65rem 0;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+
+.auth-footer a {
+    color: var(--pup-maroon);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
 }
 
 /* =========================================================
    Form Controls & Buttons
    ========================================================= */
 .form-group {
-    margin-bottom: 1.1rem;
+    margin-bottom: 1.05rem;
 }
 
 label {
     display: block;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.38rem;
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-primary);
@@ -90,11 +108,11 @@ input[type="password"],
 select,
 textarea {
     width: 100%;
-    padding: 0.65rem 0.85rem;
+    padding: 0.68rem 0.85rem;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     font-family: inherit;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
     background-color: #ffffff;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -102,7 +120,7 @@ textarea {
 
 input[type="file"] {
     width: 100%;
-    padding: 0.5rem 0.65rem;
+    padding: 0.55rem 0.65rem;
     border: 1px dashed #cbd5e1;
     border-radius: 8px;
     font-family: inherit;
@@ -120,7 +138,6 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
 }
 
-/* Password Eye Toggle Inside Right Corner */
 .password-wrapper {
     position: relative;
     width: 100%;
@@ -151,16 +168,19 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     z-index: 2;
-    transition: color 0.15s ease;
 }
 
 .toggle-password:hover {
     color: var(--pup-maroon);
 }
 
+.eye-closed {
+    display: none;
+}
+
 .btn-primary {
     width: 100%;
-    padding: 0.75rem 1.25rem;
+    padding: 0.82rem 1.25rem;
     background-color: var(--pup-maroon);
     color: #ffffff;
     border: none;
@@ -169,15 +189,11 @@ textarea:focus {
     font-weight: 600;
     cursor: pointer;
     margin-top: 0.35rem;
-    transition: background-color 0.15s ease, transform 0.1s ease;
+    transition: background-color 0.15s ease;
 }
 
 .btn-primary:hover {
     background-color: var(--pup-maroon-dark);
-}
-
-.btn-primary:active {
-    transform: translateY(1px);
 }
 
 /* =========================================================
@@ -212,9 +228,12 @@ body.dashboard-page {
 }
 
 .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
     background: linear-gradient(90deg, var(--pup-maroon-dark) 0%, var(--pup-maroon) 100%);
     color: #ffffff;
-    padding: 1.1rem 2rem;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -230,8 +249,8 @@ body.dashboard-page {
 }
 
 .topbar-sub {
-    margin: 0.2rem 0 0 0;
-    font-size: 0.85rem;
+    margin: 0.15rem 0 0 0;
+    font-size: 0.84rem;
     color: #f1f5f9;
 }
 
@@ -239,12 +258,12 @@ body.dashboard-page {
     background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.35);
-    padding: 0.5rem 1.1rem;
+    padding: 0.5rem 1rem;
     border-radius: 8px;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    white-space: nowrap;
 }
 
 .btn-logout:hover {
@@ -256,6 +275,10 @@ body.dashboard-page {
     max-width: 1200px;
     margin: 1.75rem auto;
     padding: 0 1.5rem;
+}
+
+section[id] {
+    scroll-margin-top: 5rem;
 }
 
 /* =========================================================
@@ -275,12 +298,6 @@ body.dashboard-page {
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     border-top: 4px solid var(--pup-maroon);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
 }
 
 .stat-working { border-top-color: #16a34a; }
@@ -290,7 +307,7 @@ body.dashboard-page {
 
 .stat-label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--text-muted);
@@ -346,25 +363,24 @@ body.dashboard-page {
 
 .filter-links {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.45rem;
+    padding-bottom: 0.25rem;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 .filter-links a {
     display: inline-block;
-    padding: 0.4rem 0.85rem;
+    padding: 0.42rem 0.9rem;
     border-radius: 999px;
     text-decoration: none;
     color: var(--text-secondary);
     background: #f1f5f9;
     font-size: 0.84rem;
     font-weight: 600;
-    transition: all 0.15s ease;
-}
-
-.filter-links a:hover {
-    background: #e2e8f0;
-    color: var(--text-primary);
+    white-space: nowrap;
 }
 
 .filter-links a.active {
@@ -387,7 +403,7 @@ body.dashboard-page {
 }
 
 /* =========================================================
-   Data Tables & Coordinator Controls
+   Desktop Data Tables
    ========================================================= */
 .table-wrap {
     overflow-x: auto;
@@ -411,10 +427,6 @@ th, td {
 
 tbody tr:last-child td {
     border-bottom: none;
-}
-
-tbody tr:hover {
-    background-color: #f8fafc;
 }
 
 th {
@@ -487,55 +499,216 @@ th {
     background: var(--pup-maroon);
     color: #ffffff;
     border: none;
-    padding: 0.48rem 0.85rem;
+    padding: 0.52rem 0.85rem;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.84rem;
     font-weight: 600;
-    transition: background-color 0.15s ease;
 }
 
 .btn-small:hover {
     background: var(--pup-maroon-dark);
 }
 
-/* =========================================================
-   Responsive Mobile Adjustments
-   ========================================================= */
-@media (max-width: 640px) {
-    .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-        padding: 1rem 1.25rem;
-    }
-
-    .container {
-        padding: 0 1rem;
-    }
-
-    .panel {
-        padding: 1.25rem;
-    }
-}
-
-.eye-closed {
+.mobile-bottom-nav {
     display: none;
 }
 
-.auth-footer {
-    text-align: center;
-    margin-top: 1.25rem;
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-}
+/* =========================================================
+   Mobile Responsive Website Layout (<= 768px)
+   ========================================================= */
+@media (max-width: 768px) {
+    body.dashboard-page {
+        padding-bottom: 5.5rem;
+    }
 
-.auth-footer a {
-    color: var(--pup-maroon);
-    font-weight: 600;
-    text-decoration: none;
-}
+    .topbar {
+        padding: 0.85rem 1rem;
+    }
 
-.auth-footer a:hover {
-    text-decoration: underline;
+    .topbar h1 {
+        font-size: 1.05rem;
+    }
+
+    .topbar-sub {
+        font-size: 0.78rem;
+    }
+
+    .container {
+        margin: 1rem auto;
+        padding: 0 0.85rem;
+    }
+
+    /* Clean 2-Column KPI Summary Cards */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .stat-card {
+        padding: 0.95rem 1rem;
+    }
+
+    .stat-card.stat-total {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-card.stat-total .stat-value {
+        margin-top: 0;
+        font-size: 1.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.55rem;
+    }
+
+    .panel {
+        padding: 1.15rem 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .panel h2 {
+        font-size: 1.02rem;
+    }
+
+    /* Single-Column Touch-Friendly Inputs */
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px;
+        padding: 0.72rem 0.85rem;
+    }
+
+    /* Stacked Mobile Cards Instead of Horizontal-Scroll Tables */
+    .table-wrap {
+        border: none;
+        background: transparent;
+        overflow: visible;
+    }
+
+    .mobile-cards-table thead {
+        display: none;
+    }
+
+    .mobile-cards-table,
+    .mobile-cards-table tbody,
+    .mobile-cards-table tr,
+    .mobile-cards-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .mobile-cards-table tbody tr {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--pup-maroon);
+        border-radius: 10px;
+        padding: 0.85rem 0.95rem;
+        margin-bottom: 0.9rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .mobile-cards-table tbody tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .mobile-cards-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.48rem 0;
+        border-bottom: 1px dashed #e2e8f0;
+        text-align: right;
+        font-size: 0.88rem;
+    }
+
+    .mobile-cards-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .mobile-cards-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--text-muted);
+        text-align: left;
+        flex-shrink: 0;
+        padding-top: 0.1rem;
+    }
+
+    .mobile-cards-table td.empty-row {
+        display: block;
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+
+    .mobile-cards-table td.empty-row::before {
+        content: none;
+    }
+
+    .mobile-cards-table td.action-cell {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: left;
+    }
+
+    .action-form {
+        width: 100%;
+        min-width: 0;
+        margin-top: 0.35rem;
+    }
+
+    .btn-small {
+        padding: 0.72rem 1rem;
+        font-size: 0.92rem;
+    }
+
+    /* Fixed Mobile Bottom Navigation Bar */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: #ffffff;
+        border-top: 1px solid var(--border);
+        box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.08);
+        padding: 0.45rem 0.25rem;
+    }
+
+    .mobile-bottom-nav .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.2rem;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 8px;
+        flex: 1;
+    }
+
+    .mobile-bottom-nav .nav-item.active,
+    .mobile-bottom-nav .nav-item:hover {
+        color: var(--pup-maroon);
+    }
 }
