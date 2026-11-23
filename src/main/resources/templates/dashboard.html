@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUP Lopez CLMS - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="dashboard-page">
+    <header class="topbar">
+        <div>
+            <h1>PUP Lopez Computer Laboratory Management System</h1>
+            <p class="topbar-sub">
+                Logged in as <strong th:text="${username}">user</strong>
+                (<span sec:authorize="hasRole('ICT_COORDINATOR')">ICT Coordinator</span>
+                 <span sec:authorize="hasRole('PROFESSOR')">Professor</span>)
+            </p>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </header>
+
+    <main class="container">
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <!-- Status Summary Cards -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Computers</span>
+                <span class="stat-value" th:text="${totalCount}">0</span>
+            </div>
+            <div class="stat-card stat-working">
+                <span class="stat-label">Working</span>
+                <span class="stat-value" th:text="${workingCount}">0</span>
+            </div>
+            <div class="stat-card stat-pending">
+                <span class="stat-label">Pending Inspection</span>
+                <span class="stat-value" th:text="${pendingCount}">0</span>
+            </div>
+            <div class="stat-card stat-maint">
+                <span class="stat-label">Under Maintenance</span>
+                <span class="stat-value" th:text="${maintenanceCount}">0</span>
+            </div>
+            <div class="stat-card stat-damaged">
+                <span class="stat-label">Damaged</span>
+                <span class="stat-value" th:text="${damagedCount}">0</span>
+            </div>
+        </section>
+
+        <!-- Report Submission Form (Available to Professors & ICT Coordinator) -->
+        <section class="panel">
+            <h2>Report a Computer Problem</h2>
+            <form th:action="@{/reports/submit}" method="post" enctype="multipart/form-data" class="report-grid">
+                <div class="form-group">
+                    <label for="labId">Laboratory *</label>
+                    <select id="labId" name="labId" required>
+                        <option value="">-- Select Laboratory --</option>
+                        <option th:each="lab : ${laboratories}" th:value="${lab.labId}" th:text="${lab.labName}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="computerNumber">Computer Number * (e.g. PC-01)</label>
+                    <input type="text" id="computerNumber" name="computerNumber" placeholder="PC-01" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="problemDescription">Problem Description *</label>
+                    <textarea id="problemDescription" name="problemDescription" rows="2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Additional Notes</label>
+                    <input type="text" id="notes" name="notes" placeholder="Optional details...">
+                </div>
+                <div class="form-group">
+                    <label for="attachment">Picture / Video Evidence</label>
+                    <input type="file" id="attachment" name="attachment" accept="image/*,video/*">
+                </div>
+                <div class="full-width">
+                    <button type="submit" class="btn-primary">Submit Problem Report</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Submitted Reports & ICT Coordinator Management -->
+        <section class="panel">
+            <div class="panel-header">
+                <h2>Submitted Problem Reports</h2>
+                <div class="filter-links">
+                    <a th:href="@{/dashboard}" th:classappend="${selectedLabId == null} ? 'active'">All Labs</a>
+                    <a th:each="lab : ${laboratories}"
+                       th:href="@{/dashboard(labId=${lab.labId})}"
+                       th:text="${lab.labName}"
+                       th:classappend="${selectedLabId == lab.labId} ? 'active'"></a>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Lab & PC</th>
+                            <th>Problem & Notes</th>
+                            <th>Reported By</th>
+                            <th>Evidence</th>
+                            <th>Status</th>
+                            <th sec:authorize="hasRole('ICT_COORDINATOR')">ICT Coordinator Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(reports)}">
+                            <td colspan="7" class="empty-row">No problem reports found.</td>
+                        </tr>
+                        <tr th:each="rep : ${reports}">
+                            <td th:text="'#' + ${rep.reportId}">#1</td>
+                            <td>
+                                <strong th:text="${rep.computer.laboratory.labName}">Lab 1</strong><br>
+                                <span th:text="${rep.computer.computerNumber}">PC-01</span>
+                            </td>
+                            <td>
+                                <div th:text="${rep.problemDescription}">Issue</div>
+                                <small class="muted" th:if="${rep.notes}" th:text="'Note: ' + ${rep.notes}"></small>
+                            </td>
+                            <td>
+                                <span th:text="${rep.reportedBy}">prof1</span><br>
+                                <small class="muted" th:text="${#temporals.format(rep.reportDate, 'MMM dd, yyyy HH:mm')}"></small>
+                            </td>
+                            <td>
+                                <a th:if="${rep.attachmentPath}" th:href="@{${rep.attachmentPath}}" target="_blank">View File</a>
+                                <span th:unless="${rep.attachmentPath}" class="muted">None</span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${rep.status == 'Resolved'} ? ' badge-resolved' : (${rep.status == 'Under Maintenance'} ? ' badge-maintenance' : (${rep.status == 'Damaged'} ? ' badge-damaged' : ' badge-pending'))"
+                                      th:text="${rep.status}">Pending</span>
+                            </td>
+                            <td sec:authorize="hasRole('ICT_COORDINATOR')">
+                                <form th:action="@{/coordinator/reports/{id}/update(id=${rep.reportId})}" method="post" class="action-form">
+                                    <select name="newStatus" aria-label="New Status" required>
+                                        <option value="Pending" th:selected="${rep.status == 'Pending'}">Pending</option>
+                                        <option value="Under Maintenance" th:selected="${rep.status == 'Under Maintenance'}">Under Maintenance</option>
+                                        <option value="Resolved" th:selected="${rep.status == 'Resolved'}">Resolved</option>
+                                        <option value="Damaged" th:selected="${rep.status == 'Damaged'}">Damaged</option>
+                                    </select>
+                                    <input type="text" name="actionTaken" placeholder="Action taken..." required>
+                                    <button type="submit" class="btn-small">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Maintenance History Log -->
+        <section class="panel">
+            <h2>Maintenance Activity History</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Report</th>
+                            <th>Lab & PC</th>
+                            <th>Action Taken</th>
+                            <th>Updated By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(logs)}">
+                            <td colspan="5" class="empty-row">No maintenance actions recorded yet.</td>
+                        </tr>
+                        <tr th:each="log : ${logs}">
+                            <td th:text="${#temporals.format(log.maintenanceDate, 'MMM dd, yyyy HH:mm')}">Date</td>
+                            <td th:text="'#' + ${log.report.reportId}">#1</td>
+                            <td th:text="${log.report.computer.laboratory.labName + ' - ' + log.report.computer.computerNumber}">Lab 1 - PC-01</td>
+                            <td th:text="${log.actionTaken}">Replaced keyboard</td>
+                            <td th:text="${log.coordinatorName}">ict_admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- User Account Management (ICT Coordinator Only) -->
+        <section class="panel" sec:authorize="hasRole('ICT_COORDINATOR')">
+            <h2>Manage Faculty & Coordinator Accounts</h2>
+            <form th:action="@{/coordinator/users/create}" method="post" class="report-grid">
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="e.g., Prof. Juan Dela Cruz" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUsername">Username *</label>
+                    <input type="text" id="newUsername" name="username" placeholder="e.g., jdelacruz" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Temporary Password *</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="newPassword" name="password" placeholder="Enter temporary password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('newPassword', this)" aria-label="Toggle password visibility">
+                            <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-closed" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role *</label>
+                    <select id="role" name="role" required>
+                        <option value="PROFESSOR">Professor</option>
+                        <option value="ICT_COORDINATOR">ICT Coordinator</option>
+                    </select>
+                </div>
+                <div class="full-width">
+                    <button type="submit" class="btn-primary">Create User Account</button>
+                </div>
+            </form>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${users}">
+                            <td th:text="${u.fullName}">Name</td>
+                            <td th:text="${u.username}">username</td>
+                            <td th:text="${u.role}">PROFESSOR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const eyeOpen = btn.querySelector('.eye-open');
+            const eyeClosed = btn.querySelector('.eye-closed');
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+            } else {
+                input.type = 'password';
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
