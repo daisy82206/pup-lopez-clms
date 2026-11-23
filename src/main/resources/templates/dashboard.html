@@ -5,16 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PUP Lopez CLMS - Dashboard</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
 </head>
 <body class="dashboard-page">
     <header class="topbar">
         <div>
-            <h1>PUP Lopez Computer Laboratory Management System</h1>
+            <h1>PUP Lopez CLMS</h1>
             <p class="topbar-sub">
-                Logged in as <strong th:text="${username}">user</strong>
-                (<span sec:authorize="hasRole('ICT_COORDINATOR')">ICT Coordinator</span>
-                 <span sec:authorize="hasRole('PROFESSOR')">Professor</span>)
+                <strong th:text="${username}">user</strong>
+                •
+                <span sec:authorize="hasRole('ICT_COORDINATOR')">ICT Coordinator</span>
+                <span sec:authorize="hasRole('PROFESSOR')">Professor</span>
             </p>
         </div>
         <form th:action="@{/logout}" method="post">
@@ -27,8 +28,8 @@
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
         <!-- Status Summary Cards -->
-        <section class="stats-grid">
-            <div class="stat-card">
+        <section id="sec-stats" class="stats-grid">
+            <div class="stat-card stat-total">
                 <span class="stat-label">Total Computers</span>
                 <span class="stat-value" th:text="${totalCount}">0</span>
             </div>
@@ -50,8 +51,8 @@
             </div>
         </section>
 
-        <!-- Report Submission Form (Available to Professors & ICT Coordinator) -->
-        <section class="panel">
+        <!-- Report Submission Form -->
+        <section id="sec-report" class="panel">
             <h2>Report a Computer Problem</h2>
             <form th:action="@{/reports/submit}" method="post" enctype="multipart/form-data" class="report-grid">
                 <div class="form-group">
@@ -67,7 +68,7 @@
                 </div>
                 <div class="form-group full-width">
                     <label for="problemDescription">Problem Description *</label>
-                    <textarea id="problemDescription" name="problemDescription" rows="2" required></textarea>
+                    <textarea id="problemDescription" name="problemDescription" rows="2" placeholder="Describe the issue..." required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="notes">Additional Notes</label>
@@ -84,7 +85,7 @@
         </section>
 
         <!-- Submitted Reports & ICT Coordinator Management -->
-        <section class="panel">
+        <section id="sec-reports" class="panel">
             <div class="panel-header">
                 <h2>Submitted Problem Reports</h2>
                 <div class="filter-links">
@@ -97,7 +98,7 @@
             </div>
 
             <div class="table-wrap">
-                <table>
+                <table class="mobile-cards-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -114,29 +115,36 @@
                             <td colspan="7" class="empty-row">No problem reports found.</td>
                         </tr>
                         <tr th:each="rep : ${reports}">
-                            <td th:text="'#' + ${rep.reportId}">#1</td>
-                            <td>
-                                <strong th:text="${rep.computer.laboratory.labName}">Lab 1</strong><br>
-                                <span th:text="${rep.computer.computerNumber}">PC-01</span>
+                            <td data-label="Report ID" th:text="'#' + ${rep.reportId}">#1</td>
+                            <td data-label="Lab & PC">
+                                <div>
+                                    <strong th:text="${rep.computer.laboratory.labName}">Lab 1</strong>
+                                    •
+                                    <span th:text="${rep.computer.computerNumber}">PC-01</span>
+                                </div>
                             </td>
-                            <td>
-                                <div th:text="${rep.problemDescription}">Issue</div>
-                                <small class="muted" th:if="${rep.notes}" th:text="'Note: ' + ${rep.notes}"></small>
+                            <td data-label="Problem">
+                                <div>
+                                    <div th:text="${rep.problemDescription}">Issue</div>
+                                    <small class="muted" th:if="${rep.notes}" th:text="'Note: ' + ${rep.notes}"></small>
+                                </div>
                             </td>
-                            <td>
-                                <span th:text="${rep.reportedBy}">prof1</span><br>
-                                <small class="muted" th:text="${#temporals.format(rep.reportDate, 'MMM dd, yyyy HH:mm')}"></small>
+                            <td data-label="Reported By">
+                                <div>
+                                    <span th:text="${rep.reportedBy}">prof</span><br>
+                                    <small class="muted" th:text="${#temporals.format(rep.reportDate, 'MMM dd, yyyy HH:mm')}"></small>
+                                </div>
                             </td>
-                            <td>
+                            <td data-label="Evidence">
                                 <a th:if="${rep.attachmentPath}" th:href="@{${rep.attachmentPath}}" target="_blank">View File</a>
                                 <span th:unless="${rep.attachmentPath}" class="muted">None</span>
                             </td>
-                            <td>
+                            <td data-label="Status">
                                 <span class="badge"
                                       th:classappend="${rep.status == 'Resolved'} ? ' badge-resolved' : (${rep.status == 'Under Maintenance'} ? ' badge-maintenance' : (${rep.status == 'Damaged'} ? ' badge-damaged' : ' badge-pending'))"
                                       th:text="${rep.status}">Pending</span>
                             </td>
-                            <td sec:authorize="hasRole('ICT_COORDINATOR')">
+                            <td data-label="Coordinator Action" class="action-cell" sec:authorize="hasRole('ICT_COORDINATOR')">
                                 <form th:action="@{/coordinator/reports/{id}/update(id=${rep.reportId})}" method="post" class="action-form">
                                     <select name="newStatus" aria-label="New Status" required>
                                         <option value="Pending" th:selected="${rep.status == 'Pending'}">Pending</option>
@@ -155,10 +163,10 @@
         </section>
 
         <!-- Maintenance History Log -->
-        <section class="panel">
+        <section id="sec-logs" class="panel">
             <h2>Maintenance Activity History</h2>
             <div class="table-wrap">
-                <table>
+                <table class="mobile-cards-table">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -173,11 +181,11 @@
                             <td colspan="5" class="empty-row">No maintenance actions recorded yet.</td>
                         </tr>
                         <tr th:each="log : ${logs}">
-                            <td th:text="${#temporals.format(log.maintenanceDate, 'MMM dd, yyyy HH:mm')}">Date</td>
-                            <td th:text="'#' + ${log.report.reportId}">#1</td>
-                            <td th:text="${log.report.computer.laboratory.labName + ' - ' + log.report.computer.computerNumber}">Lab 1 - PC-01</td>
-                            <td th:text="${log.actionTaken}">Replaced keyboard</td>
-                            <td th:text="${log.coordinatorName}">ict_admin</td>
+                            <td data-label="Date" th:text="${#temporals.format(log.maintenanceDate, 'MMM dd, yyyy HH:mm')}">Date</td>
+                            <td data-label="Report" th:text="'#' + ${log.report.reportId}">#1</td>
+                            <td data-label="Lab & PC" th:text="${log.report.computer.laboratory.labName + ' - ' + log.report.computer.computerNumber}">Lab 1 - PC-01</td>
+                            <td data-label="Action Taken" th:text="${log.actionTaken}">Replaced keyboard</td>
+                            <td data-label="Updated By" th:text="${log.coordinatorName}">ict_admin</td>
                         </tr>
                     </tbody>
                 </table>
@@ -185,7 +193,7 @@
         </section>
 
         <!-- User Account Management (ICT Coordinator Only) -->
-        <section class="panel" sec:authorize="hasRole('ICT_COORDINATOR')">
+        <section id="sec-users" class="panel" sec:authorize="hasRole('ICT_COORDINATOR')">
             <h2>Manage Faculty & Coordinator Accounts</h2>
             <form th:action="@{/coordinator/users/create}" method="post" class="report-grid">
                 <div class="form-group">
@@ -205,7 +213,7 @@
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
-                       <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg"
+                            <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                                 <line x1="1" y1="1" x2="23" y2="23"></line>
                             </svg>
@@ -225,7 +233,7 @@
             </form>
 
             <div class="table-wrap">
-                <table>
+                <table class="mobile-cards-table">
                     <thead>
                         <tr>
                             <th>Full Name</th>
@@ -235,15 +243,39 @@
                     </thead>
                     <tbody>
                         <tr th:each="u : ${users}">
-                            <td th:text="${u.fullName}">Name</td>
-                            <td th:text="${u.username}">username</td>
-                            <td th:text="${u.role}">PROFESSOR</td>
+                            <td data-label="Full Name" th:text="${u.fullName}">Name</td>
+                            <td data-label="Username" th:text="${u.username}">username</td>
+                            <td data-label="Role" th:text="${u.role}">PROFESSOR</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <a href="#sec-stats" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Stats</span>
+        </a>
+        <a href="#sec-report" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <span>Report</span>
+        </a>
+        <a href="#sec-reports" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            <span>Issues</span>
+        </a>
+        <a href="#sec-logs" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>History</span>
+        </a>
+        <a href="#sec-users" class="nav-item" sec:authorize="hasRole('ICT_COORDINATOR')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span>Users</span>
+        </a>
+    </nav>
 
     <script>
         function togglePassword(inputId, btn) {
@@ -260,6 +292,13 @@
                 eyeClosed.style.display = 'none';
             }
         }
+
+        document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
     </script>
 </body>
 </html>
