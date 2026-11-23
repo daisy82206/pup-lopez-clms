@@ -1,5 +1,5 @@
 /* =========================================================
-   PUP Lopez CLMS - Desktop & Mobile Responsive Stylesheet
+   PUP Lopez CLMS - Institutional Responsive Stylesheet
    ========================================================= */
 
 :root {
@@ -233,10 +233,11 @@ body.dashboard-page {
     z-index: 40;
     background: linear-gradient(90deg, var(--pup-maroon-dark) 0%, var(--pup-maroon) 100%);
     color: #ffffff;
-    padding: 1rem 2rem;
+    padding: 0.95rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
     border-bottom: 3px solid var(--pup-gold);
 }
@@ -258,9 +259,9 @@ body.dashboard-page {
     background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.35);
-    padding: 0.5rem 1rem;
+    padding: 0.48rem 1rem;
     border-radius: 8px;
-    font-size: 0.86rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -363,12 +364,8 @@ section[id] {
 
 .filter-links {
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-wrap: wrap;
     gap: 0.45rem;
-    padding-bottom: 0.25rem;
-    max-width: 100%;
-    -webkit-overflow-scrolling: touch;
 }
 
 .filter-links a {
@@ -539,7 +536,7 @@ th {
         padding: 0 0.85rem;
     }
 
-    /* Clean 2-Column KPI Summary Cards */
+    /* Balanced 1-Top + 2x2 Grid for the 5 KPI Cards */
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
@@ -550,16 +547,18 @@ th {
         padding: 0.95rem 1rem;
     }
 
-    .stat-card.stat-total {
+    .stat-card:first-child {
         grid-column: 1 / -1;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: linear-gradient(135deg, #ffffff 0%, #fdf2f2 100%);
     }
 
-    .stat-card.stat-total .stat-value {
+    .stat-card:first-child .stat-value {
         margin-top: 0;
-        font-size: 1.75rem;
+        font-size: 1.85rem;
+        color: var(--pup-maroon);
     }
 
     .stat-value {
@@ -575,7 +574,6 @@ th {
         font-size: 1.02rem;
     }
 
-    /* Single-Column Touch-Friendly Inputs */
     .report-grid {
         grid-template-columns: 1fr;
     }
@@ -588,26 +586,27 @@ th {
         padding: 0.72rem 0.85rem;
     }
 
-    /* Stacked Mobile Cards Instead of Horizontal-Scroll Tables */
+    /* Stacked Mobile Cards Instead of Horizontal Tables */
     .table-wrap {
         border: none;
         background: transparent;
         overflow: visible;
     }
 
-    .mobile-cards-table thead {
-        display: none;
-    }
-
-    .mobile-cards-table,
-    .mobile-cards-table tbody,
-    .mobile-cards-table tr,
-    .mobile-cards-table td {
+    table,
+    thead,
+    tbody,
+    tr,
+    td {
         display: block;
         width: 100%;
     }
 
-    .mobile-cards-table tbody tr {
+    thead {
+        display: none;
+    }
+
+    tbody tr {
         background: #ffffff;
         border: 1px solid var(--border);
         border-left: 4px solid var(--pup-maroon);
@@ -617,11 +616,11 @@ th {
         box-shadow: var(--shadow-sm);
     }
 
-    .mobile-cards-table tbody tr:last-child {
+    tbody tr:last-child {
         margin-bottom: 0;
     }
 
-    .mobile-cards-table td {
+    td {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -632,15 +631,15 @@ th {
         font-size: 0.88rem;
     }
 
-    .mobile-cards-table td:last-child {
+    td:last-child {
         border-bottom: none;
         padding-bottom: 0;
     }
 
-    .mobile-cards-table td::before {
+    td::before {
         content: attr(data-label);
         font-weight: 700;
-        font-size: 0.75rem;
+        font-size: 0.74rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         color: var(--text-muted);
@@ -649,17 +648,17 @@ th {
         padding-top: 0.1rem;
     }
 
-    .mobile-cards-table td.empty-row {
+    td.empty-row {
         display: block;
         text-align: center;
         padding: 1.5rem 1rem;
     }
 
-    .mobile-cards-table td.empty-row::before {
+    td.empty-row::before {
         content: none;
     }
 
-    .mobile-cards-table td.action-cell {
+    td.action-cell {
         flex-direction: column;
         align-items: stretch;
         text-align: left;
